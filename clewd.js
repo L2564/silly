@@ -29,7 +29,7 @@ const CookieCleaner = () => {
 }, padtxt = content => {
     const {encode} = require('gpt-tokenizer');
     const placeholder = Config.padtxt_placeholder || randomBytes(randomInt(5, 15)).toString('hex');
-    let count = Math.floor(Math.max(1000, Math.floor(Config.Settings.padtxt - encode(content).length)) / encode(placeholder).length); 
+    let count = Math.floor(Math.max(1000, Config.Settings.padtxt - encode(content).length) / encode(placeholder).length); 
     let padding = '';
     for (let i = 0; i < count; i++) {
         padding += placeholder;
@@ -247,8 +247,8 @@ const updateParams = res => {
     if (Config.CookieArray?.length > 0) {
         Config.Cookie = Config.CookieArray[currentIndex];
         currentIndex = (currentIndex + 1) % Config.CookieArray.length;
-        changetime += 1;
     }
+    changetime += 1;
     let percentage = ((changetime + Math.max(Config.CookieIndex - 1, 0)) / totaltime) * 100
     if (Config.Cookiecounter < 0 && percentage > 100) {
         console.log(`\n※※※Cookie cleanup completed※※※\n\n`);
@@ -309,6 +309,9 @@ const updateParams = res => {
     model = accountInfo.account.statsig.values.dynamic_configs["6zA9wvTedwkzjLxWy9PVe7yydI00XDQ6L5Fejjq/2o8="]?.value?.model;
     model === 'claude-2.0-magenta' && console.log(`[33mMagenta![0m`);
     if (model != 'claude-2.0-magenta' && Config.Cookiecounter === -201) {
+        CookieCleaner();
+        return CookieChanger.emit('ChangeCookie');
+    } else if (model != 'claude-2.1' && Config.Cookiecounter === -21) {
         CookieCleaner();
         return CookieChanger.emit('ChangeCookie');
     } else if (model != 'claude-2' && Config.Cookiecounter === -2) {
